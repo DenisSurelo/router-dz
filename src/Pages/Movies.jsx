@@ -2,6 +2,8 @@ import { useState } from "react";
 import { searchMovies } from "../api";
 import { Link } from "react-router-dom";
 
+const IMG_BASE_URL = "https://image.tmdb.org/t/p/w200";
+
 function Movies() {
   const [query, setQuery] = useState("");
   const [movies, setMovies] = useState([]);
@@ -29,7 +31,13 @@ function Movies() {
       <ul>
         {movies.map((movie) => (
           <li key={movie.id}>
-            <Link to={`/movies/${movie.id}`}>{movie.title}</Link>
+            <Link to={`/movies/${movie.id}`}>
+              <img
+                src={movie.poster_path ? `${IMG_BASE_URL}${movie.poster_path}` : "https://via.placeholder.com/100x150"}
+                alt={movie.title}
+              />
+              {movie.title}
+            </Link>
           </li>
         ))}
       </ul>

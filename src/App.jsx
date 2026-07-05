@@ -1,21 +1,27 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import Home from './pages/Home';
-import Movies from './pages/Movies';
-import Movie from './components/Movie';
-import MovieInfo from './components/MovieInfo';
+import { Routes, Route } from "react-router-dom";
+import { lazy, Suspense } from "react";
+import Layout from "./components/Layout";
+import NotFound from "./pages/NotFound";
+
+const Home = lazy(() => import("./pages/Home"));
+const Movies = lazy(() => import("./pages/Movies"));
+const Movie = lazy(() => import("./components/Movie"));
+const MovieInfo = lazy(() => import("./components/MovieInfo"));
 
 function App() {
   return (
-    <BrowserRouter>
+    <Suspense fallback={<div>Loading...</div>}>
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/movies" element={<Movies />} />
-        <Route path="/movies/:movieId" element={<Movie />}>
-          <Route path="info" element={<MovieInfo />} />
+        <Route path="/" element={<Layout />}>
+          <Route index element={<Home />} />
+          <Route path="movies" element={<Movies />} />
+          <Route path="movies/:movieId" element={<Movie />}>
+            <Route path="info" element={<MovieInfo />} />
+          </Route>
+          <Route path="*" element={<NotFound />} />
         </Route>
-        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
-    </BrowserRouter>
+    </Suspense>
   );
 }
 

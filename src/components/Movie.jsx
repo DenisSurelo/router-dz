@@ -1,4 +1,4 @@
-import { useParams, Link, Outlet } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getMovieDetails } from "../api";
 
@@ -7,6 +7,8 @@ const IMG_BASE_URL = "https://image.tmdb.org/t/p/w500";
 function Movie() {
   const { movieId } = useParams();
   const [movie, setMovie] = useState(null);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     getMovieDetails(movieId).then(setMovie);
@@ -14,17 +16,21 @@ function Movie() {
 
   if (!movie) return <p>Loading...</p>;
 
+  const handleGoBack = () => {
+    const params = new URLSearchParams(location.search);
+    const query = params.get("query");
+    navigate(query ? `/movies?query=${query}` : "/movies");
+  };
+
   return (
     <div>
-      <h2>{movie.title} ({movie.release_date?.slice(0, 4)})</h2>
+      <button onClick={handleGoBack}>Go Back</button>
+      <h2>{movie.title}</h2>
       <img
         src={movie.poster_path ? `${IMG_BASE_URL}${movie.poster_path}` : "https://via.placeholder.com/200x300"}
         alt={movie.title}
       />
-      <p>User Score: {Math.round(movie.vote_average * 10)}%</p>
       <p>{movie.overview}</p>
-      <Link to="info">More info</Link>
-      <Outlet />
     </div>
   );
 }
